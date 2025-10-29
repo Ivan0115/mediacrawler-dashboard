@@ -151,9 +151,7 @@ app.get('/iframe-demo.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'iframe-demo.html'));
 });
 
-app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// 旧demo页面已重命名为 _old_demo.html
 
 // 启动服务器
 app.listen(PORT, () => {
