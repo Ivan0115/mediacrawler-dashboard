@@ -103,6 +103,24 @@ app.get('/api/data/platform/:platform', async (req, res) => {
     }
 });
 
+// 按关键词搜索数据
+app.get('/api/data/keyword/:keyword', async (req, res) => {
+    try {
+        const keyword = req.params.keyword;
+        const limit = parseInt(req.query.limit) || 50;
+        const data = await dataReader.getDataByKeyword(keyword, limit);
+        res.json({
+            success: true,
+            data: data
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
 // 检查数据源状态
 app.get('/api/status', (req, res) => {
     const status = dataReader.getStatus();

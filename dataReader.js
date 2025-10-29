@@ -298,6 +298,43 @@ class DataReader {
         return data.filter(item => item.platform === platform).slice(0, limit);
     }
 
+    // 按关键词搜索数据
+    async getDataByKeyword(keyword, limit = 50) {
+        let allData = this.cache.data;
+        if (allData.length === 0) {
+            const result = await this.getAllData();
+            allData = [...result.latest, ...result.hot];
+        }
+        
+        const keywordLower = keyword.toLowerCase();
+        const filtered = allData.filter(item => 
+            item.title.toLowerCase().includes(keywordLower) ||
+            (item.author && item.author.toLowerCase().includes(keywordLower))
+        );
+
+        // 去重
+        const uniqueFiltered = Array.from(
+            new Map(filtered.map(item => [item.id, item])).values()
+        );
+
+        // 按时间排序
+        uniqueFiltered.sort((a, b) => 
+            new Date(b.createTime) - new Date(a.createTime)
+        );
+
+        const items = uniqueFiltered.slice(0, limit);
+        
+        // 计算统计数据
+        const stats = {
+            totalCount: items.length,
+            totalViews: items.reduce((sum, item) => sum + (item.views || 0), 0),
+            totalLikes: items.reduce((sum, item) => sum + (item.likes || 0), 0),
+            totalComments: items.reduce((sum, item) => sum + (item.comments || 0), 0)
+        };
+
+        return { items, stats };
+    }
+
     // 从数据中获取最新的
     getLatestFromData(data, limit) {
         return [...data]
