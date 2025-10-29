@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iframe嵌入示例 - MediaCrawler数据大屏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .demo-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .demo-section h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .iframe-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+        }
+
+        iframe {
+            display: block;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info h3 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info p {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .feature-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card h4 {
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border: 1px solid #8b5cf6;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 MediaCrawler数据大屏 - iframe嵌入示例</h1>
+        <p class="subtitle">实时展示爬虫数据的可视化大屏</p>
+
+        <!-- 主要演示区域 -->
+        <div class="demo-section">
+            <h2>📱 实际效果预览（480×360）</h2>
+            <div class="iframe-container">
+                <iframe 
+                    src="http://localhost:3000/dashboard-small.html" 
+                    width="480" 
+                    height="360"
+                    frameborder="0">
+                </iframe>
+            </div>
+            
+            <div class="info">
+                <h3>💡 使用说明</h3>
+                <p>这就是你要的效果！上面的iframe展示了480×360尺寸的实时数据大屏。</p>
+                <p>数据每30秒自动刷新，无需手动操作。</p>
+            </div>
+        </div>
+
+        <!-- 功能特点 -->
+        <div class="demo-section">
+            <h2>✨ 功能特点</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="icon">📊</div>
+                    <h4>实时统计</h4>
+                    <p>今日抓取、总浏览、总点赞、总评论实时更新</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔥</div>
+                    <h4>最新内容</h4>
+                    <p>展示最新抓取的内容，按时间倒序</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⭐</div>
+                    <h4>热门排行</h4>
+                    <p>按点赞数排序，展示最受欢迎的内容</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <h4>自动刷新</h4>
+                    <p>每30秒自动更新数据，保持实时性</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h4>精美UI</h4>
+                    <p>现代化设计，渐变色彩，流畅动画</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h4>完美适配</h4>
+                    <p>专为480×360尺寸优化，紧凑布局</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 代码示例 -->
+        <div class="demo-section">
+            <h2>💻 嵌入代码</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">复制以下代码到你的HTML页面中：</p>
+            
+            <div class="code-block">
+                <code>&lt;iframe 
+    src="http://localhost:3000/dashboard-small.html" 
+    width="480" 
+    height="360"
+    frameborder="0"
+    style="border: none;"&gt;
+&lt;/iframe&gt;</code>
+            </div>
+
+            <div class="info">
+                <h3>📝 注意事项</h3>
+                <p>1. 确保服务器正在运行（npm start）</p>
+                <p>2. 如果要在其他页面嵌入，保持服务器开启</p>
+                <p>3. 部署到服务器后，将localhost:3000改为实际域名</p>
+            </div>
+        </div>
+
+        <!-- 数据源说明 -->
+        <div class="demo-section">
+            <h2>💾 数据源配置</h2>
+            <div class="info">
+                <h3>当前状态</h3>
+                <p>⚠️ 目前使用模拟数据（演示用途）</p>
+            </div>
+
+            <h3 style="color: #94a3b8; margin: 20px 0 10px;">如何使用真实的MediaCrawler数据？</h3>
+            <p style="color: #cbd5e1; margin-bottom: 10px;">1. 创建data目录：</p>
+            <div class="code-block">
+                <code>mkdir data</code>
+            </div>
+
+            <p style="color: #cbd5e1; margin-bottom: 10px;">2. 复制MediaCrawler导出的数据文件到data目录：</p>
+            <div class="code-block">
+                <code># 支持CSV、JSON、SQLite数据库
+data/
+├── xiaohongshu_notes.csv
+├── douyin_videos.csv
+└── bilibili_videos.csv</code>
+            </div>
+
+            <p style="color: #cbd5e1; margin-bottom: 10px;">3. 重启服务器即可自动读取真实数据</p>
+        </div>
+
+        <!-- 快捷链接 -->
+        <div class="demo-section">
+            <h2>🔗 快捷链接</h2>
+            <div class="buttons">
+                <a href="http://localhost:3000/dashboard-small.html" target="_blank" class="btn btn-primary">
+                    打开iframe版大屏
+                </a>
+                <a href="http://localhost:3000/dashboard.html" target="_blank" class="btn btn-secondary">
+                    打开完整版大屏
+                </a>
+                <a href="http://localhost:3000/api/data/all" target="_blank" class="btn btn-secondary">
+                    查看API数据
+                </a>
+                <a href="http://localhost:3000/api/status" target="_blank" class="btn btn-secondary">
+                    检查服务状态
+                </a>
+            </div>
+        </div>
+
+        <!-- 支持的平台 -->
+        <div class="demo-section">
+            <h2>🌐 支持的平台</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="icon">🟥</div>
+                    <h4>小红书</h4>
+                    <p>笔记内容、点赞、评论</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚫</div>
+                    <h4>抖音</h4>
+                    <p>视频数据、播放量、互动</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔵</div>
+                    <h4>B站</h4>
+                    <p>视频信息、播放、弹幕</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🟧</div>
+                    <h4>快手</h4>
+                    <p>短视频、点赞、分享</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

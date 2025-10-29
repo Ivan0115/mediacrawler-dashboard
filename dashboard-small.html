@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaCrawler 数据监控</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow: hidden;
+            width: 480px;
+            height: 360px;
+        }
+
+        .dashboard {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d3f 100%);
+            overflow: hidden;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 8px;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 1rem;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3px;
+        }
+
+        .header .update-time {
+            color: #10b981;
+            font-size: 0.65rem;
+        }
+
+        /* 统计卡片区域 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .stat-card .label {
+            color: #94a3b8;
+            font-size: 0.6rem;
+            margin-bottom: 2px;
+        }
+
+        .stat-card .value {
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 主要内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            height: 230px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.02));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 数据列表 */
+        .data-list {
+            list-style: none;
+        }
+
+        .data-item {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 4px;
+            padding: 6px;
+            margin-bottom: 4px;
+            font-size: 0.65rem;
+        }
+
+        .data-item .title {
+            color: #fff;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.7rem;
+        }
+
+        .data-item .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: #94a3b8;
+            gap: 4px;
+        }
+
+        .data-item .meta span {
+            white-space: nowrap;
+        }
+
+        .data-item .platform {
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 0.55rem;
+        }
+
+        .platform.xiaohongshu {
+            background: #ff2442;
+            color: #fff;
+        }
+
+        .platform.douyin {
+            background: #000;
+            color: #fff;
+        }
+
+        .platform.bilibili {
+            background: #00a1d6;
+            color: #fff;
+        }
+
+        .platform.kuaishou {
+            background: #ff6600;
+            color: #fff;
+        }
+
+        /* 滚动条样式 */
+        .panel-content::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 2px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 2px;
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 10px;
+            color: #94a3b8;
+            font-size: 0.7rem;
+        }
+
+        .spinner {
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>📊 MediaCrawler 实时监控</h1>
+            <div class="update-time">更新: <span id="updateTime">--</span></div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">📝</div>
+                <div class="label">今日</div>
+                <div class="value" id="todayCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👁️</div>
+                <div class="label">浏览</div>
+                <div class="value" id="totalViews">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">❤️</div>
+                <div class="label">点赞</div>
+                <div class="value" id="totalLikes">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💬</div>
+                <div class="label">评论</div>
+                <div class="value" id="totalComments">0</div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            <!-- 最新内容 -->
+            <div class="panel">
+                <div class="panel-header">🔥 最新</div>
+                <div class="panel-content" id="latestContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>加载中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门内容 -->
+            <div class="panel">
+                <div class="panel-header">⭐ 热门</div>
+                <div class="panel-content" id="hotContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>加载中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据管理类
+        class DataManager {
+            constructor() {
+                this.apiBase = window.location.origin;
+            }
+
+            // 从API获取数据
+            async fetchData() {
+                try {
+                    const response = await fetch(`${this.apiBase}/api/data/all`);
+                    const result = await response.json();
+                    if (result.success) {
+                        return result.data;
+                    }
+                    throw new Error('数据获取失败');
+                } catch (error) {
+                    console.error('获取数据失败:', error);
+                    // 返回空数据
+                    return {
+                        latest: [],
+                        hot: [],
+                        stats: {
+                            todayCount: 0,
+                            totalViews: 0,
+                            totalLikes: 0,
+                            totalComments: 0
+                        }
+                    };
+                }
+            }
+
+            // 格式化数字
+            formatNumber(num) {
+                if (num >= 10000) {
+                    return (num / 10000).toFixed(1) + 'w';
+                }
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'k';
+                }
+                return num.toLocaleString();
+            }
+        }
+
+        // 页面渲染类
+        class Dashboard {
+            constructor() {
+                this.dataManager = new DataManager();
+                this.updateInterval = null;
+            }
+
+            async init() {
+                await this.updateData();
+                this.startAutoUpdate();
+            }
+
+            async updateData() {
+                const data = await this.dataManager.fetchData();
+                this.renderStats(data.stats);
+                this.renderLatestContent(data.latest);
+                this.renderHotContent(data.hot);
+                this.updateTime();
+            }
+
+            renderStats(stats) {
+                document.getElementById('todayCount').textContent = stats.todayCount;
+                document.getElementById('totalViews').textContent = this.dataManager.formatNumber(stats.totalViews);
+                document.getElementById('totalLikes').textContent = this.dataManager.formatNumber(stats.totalLikes);
+                document.getElementById('totalComments').textContent = this.dataManager.formatNumber(stats.totalComments);
+            }
+
+            renderLatestContent(data) {
+                const container = document.getElementById('latestContent');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading">暂无数据</div>';
+                    return;
+                }
+                
+                const html = `
+                    <ul class="data-list">
+                        ${data.slice(0, 8).map(item => `
+                            <li class="data-item">
+                                <div class="title">${item.title}</div>
+                                <div class="meta">
+                                    <span class="platform ${item.platform}">${item.platformLabel}</span>
+                                    <span>❤️${this.dataManager.formatNumber(item.likes)}</span>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.innerHTML = html;
+            }
+
+            renderHotContent(data) {
+                const container = document.getElementById('hotContent');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading">暂无数据</div>';
+                    return;
+                }
+                
+                const html = `
+                    <ul class="data-list">
+                        ${data.slice(0, 8).map((item, index) => `
+                            <li class="data-item">
+                                <div class="title">
+                                    <span style="color: ${index < 3 ? '#f59e0b' : '#94a3b8'}">
+                                        ${index + 1}.
+                                    </span>
+                                    ${item.title}
+                                </div>
+                                <div class="meta">
+                                    <span class="platform ${item.platform}">${item.platformLabel}</span>
+                                    <span>❤️${this.dataManager.formatNumber(item.likes)}</span>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.innerHTML = html;
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                document.getElementById('updateTime').textContent = timeStr;
+            }
+
+            startAutoUpdate() {
+                // 每30秒自动更新一次数据
+                this.updateInterval = setInterval(() => {
+                    this.updateData();
+                }, 30000);
+            }
+
+            stopAutoUpdate() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+            }
+        }
+
+        // 初始化大屏
+        const dashboard = new Dashboard();
+        dashboard.init();
+
+        // 页面卸载时停止自动更新
+        window.addEventListener('beforeunload', () => {
+            dashboard.stopAutoUpdate();
+        });
+    </script>
+</body>
+</html>
