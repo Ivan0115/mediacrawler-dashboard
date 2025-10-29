@@ -130,9 +130,29 @@ app.get('/api/status', (req, res) => {
     });
 });
 
-// 主页面路由
+// HTML页面路由
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/dashboard-small.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard-small.html'));
+});
+
+app.get('/dashboard-deepfake.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard-deepfake.html'));
+});
+
+app.get('/iframe-demo.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'iframe-demo.html'));
+});
+
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // 启动服务器
